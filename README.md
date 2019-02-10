@@ -11,7 +11,7 @@ $ ./ransac_2d points1.txt
 ```
 
 ```
-python create_points.py
+$ python create_points.py
 ```
 
 #### Make sure the parameters of RANSAC match in python and C++ codes if you want to test the implementation of C++ code.
