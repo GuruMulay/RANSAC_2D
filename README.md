@@ -22,3 +22,10 @@ python create_points.py
 <p align="center">
   <img src="points2.png?raw=true" alt="RANSAC C++ Python"/>
 </p>
+
+
+#### References:
+
+[https://github.com/joekeo/RANSAC/blob/master/main.cpp](https://github.com/joekeo/RANSAC/blob/master/main.cpp)
+
+[http://scikit-image.org/docs/dev/auto_examples/transform/plot_ransac.html](http://scikit-image.org/docs/dev/auto_examples/transform/plot_ransac.html)

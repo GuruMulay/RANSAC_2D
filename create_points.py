@@ -1,5 +1,4 @@
 # http://scikit-image.org/docs/dev/auto_examples/transform/plot_ransac.html
-
 import numpy as np
 from matplotlib import pyplot as plt
 from skimage.measure import LineModelND, ransac
