@@ -6,11 +6,7 @@
 #include <vector>
 #include <array>
 #include <math.h>
-// #include <stdlib.h> // srand, rand
-// srand (1);  // random seed
-
-
-// #include "vector2d.h"
+// Thanks to https://github.com/joekeo/RANSAC/blob/master/main.cpp
 
 using point2d = std::array<double, 2>;
 
@@ -23,7 +19,7 @@ public:
   double outlierFraction;
 
   std::vector<point2d> data;  // totalNx2 data
-  unsigned totalN;  // ttal number of points
+  unsigned totalN;  // total number of points
   std::vector<bool> inliers;  // stores bool if current inlier or not
   std::vector<bool> finalInliers;  // if the model is best fit then update this vector
 
@@ -37,7 +33,7 @@ public:
   // Ransac();
   Ransac(int, double, double, double);
   bool readInfile(std::string const&);
-  bool isWithinThreshold();
+  bool isWithinThreshold(const std::array<double, 2> &, const std::array<double, 2> &, const std::array<double, 2> &);
   void findBestFit();
   void printRansacParameters(bool);
   ~Ransac();
@@ -49,15 +45,39 @@ private:
 Ransac::Ransac(int n, double threshold, double confidence, double outlierFraction): n(n), threshold(threshold), confidence(confidence), outlierFraction(outlierFraction){}
 
 
+bool Ransac::readInfile(std::string const& infile){
+  std::ifstream file(infile.c_str());
+  if (file.is_open())
+  {
+    std::cout << "Reading ... " << infile << std::endl;
+    double x, y;
+    char separator;
+
+    while(file >> x >> separator >> y){
+      data.push_back({x, y});
+      std::cout << x << " " << y << std::endl;
+    }  // while
+
+    totalN = data.size();
+    return true;
+  } // if
+  else
+  {
+    std::cout << "Unable to open " << infile << std::endl;
+    return false;
+  } // else
+} // readInfile
+
+
 bool Ransac::isWithinThreshold(const std::array<double, 2> &a, const std::array<double, 2> &b, const std::array<double, 2> &p){
-  // line from a to b
-  // check if p is within threshold distance of line ab
+  // line from a to b; check if p is within threshold distance of line ab
   // https://en.wikipedia.org/wiki/Distance_from_a_point_to_a_line
-  if (){
+  double numerator = abs((b[1] - a[1])*p[0] - (b[0] - a[0])*p[1] + b[0]*a[1] - b[1]*a[0]);
+  double denominator = sqrt(pow(b[1] - a[1], 2) + pow(b[0] - a[0], 2));
+  if (numerator/denominator < threshold){
     return true;
   }
   else return false;
-
 }  // isWithinThreshold
 
 
@@ -79,7 +99,7 @@ void Ransac::findBestFit(){
     // iterate over the data points to find the number of points that are within threshold epsilon distance of the line fit for maybeInlierA and maybeInlierB
     for(unsigned p = 0; p <= totalN; p++){
       currPoint = {data[p][0], data[p][1]};
-      if isWithinThreshold(maybeInlierA, maybeInlierB, currPoint){
+      if (isWithinThreshold(maybeInlierA, maybeInlierB, currPoint)){
         // increase curr inliers count and set true in the inliers vector
         nInliersCurr += 1;
         inliers.push_back(true);
@@ -96,44 +116,11 @@ void Ransac::findBestFit(){
           bestFitPointB = {data[n1][0], data[n1][1]};
           finalInliers = inliers;
       }  // if
-
-
     }  // for data points
   }  // for k iterations
-  std::cout << "Completed " << k << " iterations of RANSAC!"<< std::endl;
+  std::cout << "\nCompleted " << k << " iterations of RANSAC!"<< std::endl;
 }  // findBestFit
 
-
-bool Ransac::readInfile(std::string const& infile){
-  std::ifstream file(infile.c_str());
-  if (file.is_open())
-  {
-    std::cout << "Reading ... " << infile << std::endl;
-    double x, y;
-    char separator;
-
-    while(true){
-      file >> x >> separator >> y;
-      data.push_back({x, y});
-      if (file.eof()) break;
-    }  // while
-
-    totalN = data.size();
-    return true;
-  } // if
-  else
-  {
-    std::cout << "Unable to open " << infile << std::endl;
-    return false;
-  } // else
-} // readInfile
-
-
-// void Ransac::printInliers(){
-//   for (size_t i = 0; i != data.size(); i++){
-//     std::cout << data[i][0] << ", " << data[i][1] << "" << std::endl;
-//   }
-// }  // printInliers
 
 void Ransac::printRansacParameters(bool printData){
   std::cout << '\n' << "Ransac Parameters -------------------------------------------------->" << std::endl;
@@ -144,24 +131,14 @@ void Ransac::printRansacParameters(bool printData){
   std::cout << "outlierFraction: " << outlierFraction << std::endl;
   if (printData){
     for (size_t i = 0; i != data.size(); i++){
-      std::cout << data[i][0] << ", " << data[i][1] << ", isInlier? " << finalInliers[i] << std::endl;
+      std::cout << i << " " << data[i][0] << ", " << data[i][1] << ", isInlier? " << finalInliers[i] << std::endl;
     }
   }  // if
-
-  std::cout << "Best fitting line is parameterized by points" << << std::endl;
+  std::cout << "Best fitting line is parameterized by points A: (" << bestFitPointA[0] << ", " << bestFitPointA[1] << ") B: (" << bestFitPointB[0] << ", " << bestFitPointB[1] << ")"<< std::endl;
   std::cout << "-------------------------------------------------->" << std::endl;
 
 }  // printRansacParameters
 
-
 Ransac::~Ransac(){}
 
 #endif  // RANSAC_H_INCLUDED
-
-abs(
-  (
-    (LP1[1] - LP0[1]) * Point[0] - (LP1[0] - LP0[0]) * Point[1] + LP1[0]*LP0[1] - LP1[1]*LP0[0]
-  )
-
-  / sqrt(pow((LP1[1]-LP0[1]),2) + pow(LP1[0]-LP0[0],2))
-);

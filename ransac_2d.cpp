@@ -20,7 +20,7 @@ int main(int argc, char *argv[]){
   std::cout << "infile: " << infile << "; outfile: " << outfile << std::endl;
 
   // Ransac
-  Ransac* R = new Ransac(2, 0.1, 0.99, 0.3333);
+  Ransac* R = new Ransac(2, 0.1, 0.99, 0.5);
 
   if (!R->readInfile(infile)){
     std::cerr << "Cannot open input file " << infile << std::endl;
@@ -29,5 +29,4 @@ int main(int argc, char *argv[]){
   R->findBestFit();
 
   R->printRansacParameters(true);
-
 } // main
