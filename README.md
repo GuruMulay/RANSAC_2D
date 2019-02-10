@@ -1,10 +1,24 @@
 ### RANSAC 2D implementation
 
-### Exceute:
+### Compile:
+```
+$ make
+```
 
+### Execute:
+```
 $ ./ransac_2d points1.txt
+```
+
+```
+python create_points.py
+```
+
+#### Make sure the parameters of RANSAC match in python and C++ codes if you want to test the implementation of C++ code.
+
+#### You can specify your own input file instead of points1.txt. Input file should be a comma separated file. Currently, all the output is directed to stdout.
 
 
-#### You can specify your own input file instead of points1.txt. Input file should be a comma separated file.
-
-Currently all the output is directed to stdout. 
+<p align="center">
+  <img src="points2.png?raw=true" alt="RANSAC C++ Python"/>
+</p>

@@ -20,7 +20,7 @@ int main(int argc, char *argv[]){
   std::cout << "infile: " << infile << "; outfile: " << outfile << std::endl;
 
   // Ransac
-  Ransac* R = new Ransac(2, 0.1, 0.99, 0.5);
+  Ransac* R = new Ransac(2, 10, 0.999, 0.12);  // copy these number from output of python in case you want to test the code
 
   if (!R->readInfile(infile)){
     std::cerr << "Cannot open input file " << infile << std::endl;
