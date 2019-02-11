@@ -108,15 +108,14 @@ void Ransac::findBestFit(){
       {
         inliers.push_back(false);
       }
-
-      if (nInliersGlobalMax < nInliersCurr){
-          nInliersGlobalMax = nInliersCurr;
-          // update best fit points A and B
-          bestFitPointA = {data[n0][0], data[n0][1]};
-          bestFitPointB = {data[n1][0], data[n1][1]};
-          finalInliers = inliers;
-      }  // if
     }  // for data points
+    if (nInliersGlobalMax < nInliersCurr){
+        nInliersGlobalMax = nInliersCurr;
+        // update best fit points A and B
+        bestFitPointA = {data[n0][0], data[n0][1]};
+        bestFitPointB = {data[n1][0], data[n1][1]};
+        finalInliers = inliers;
+    }  // if
   }  // for k iterations
   std::cout << "\nCompleted " << k << " iterations of RANSAC!"<< std::endl;
 }  // findBestFit
